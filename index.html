@@ -1,0 +1,47 @@
+<html>
+<head>
+  <script type="text/javascript">
+    const operations = ["-*/", "-/*", "*-/", "*/-", "/-*", "/*-"];
+    function computeNumericCore(digits) {
+      return operations
+        .map(op => `(((${digits[0]} ${op[0]} ${digits[1]}) ${op[1]} ${digits[2]}) ${op[2]} ${digits[3]})`)
+        .map(exp => [exp, eval(exp)])
+        .filter(x => Number.isInteger(x[1]) && x[1] > 0)
+    }
+
+    function getDigitSplits(numberStr) {
+      const numDigits = numberStr.length;
+      const output = [];
+      for (a = 1; a <= numDigits - 3; a++) {
+        for (b = a + 1; b <= numDigits - 2; b++) {
+          for (c = b + 1; c <= numDigits - 1; c++) {
+            output.push([
+              parseInt(numberStr.slice(0, a)),
+              parseInt(numberStr.slice(a, b)),
+              parseInt(numberStr.slice(b, c)),
+              parseInt(numberStr.slice(c, numDigits))
+            ])
+          }
+        }
+      }
+      return output;
+    }
+
+    // 5
+    // a must be 1 or 2
+    // b must be 2
+
+    function onClick() {
+      const inputStr = document.querySelector("#input").value;
+      const digitSplits = getDigitSplits(inputStr);
+      const output = digitSplits.flatMap(computeNumericCore).sort((a, b) => a[1] > b[1]);
+      document.querySelector("#output").innerText = JSON.stringify(output, null, 2);
+    }
+  </script>
+</head>
+<body>
+  <input id="input" type="number"></input>
+  <button onClick="onClick()">Calculate</button>
+  <pre id="output"></pre>
+</body>
+</html>
